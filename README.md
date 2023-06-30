@@ -1,40 +1,37 @@
-Below are the steps to get your plugin running. You can also find instructions at:
+# Copy Layer Name
 
-  https://www.figma.com/plugin-docs/plugin-quickstart-guide/
+This is a Figma plugin designed to help you copy layer names directly. It becomes particularly useful when you need to quickly copy the name of selected layers in Figma's development mode, a functionality currently missing in Figma's native interface.
 
-This plugin template uses Typescript and NPM, two standard tools in creating JavaScript applications.
+## Usage
 
-First, download Node.js which comes with NPM. This will allow you to install TypeScript and other
-libraries. You can find the download link here:
+1. Install the plugin.
+2. Select the layer whose name you want to copy.
+3. Run the plugin, and the layer name will be copied to your clipboard.
 
-  https://nodejs.org/en/download/
+## Local Installation
 
-Next, install TypeScript using the command:
+To install this plugin locally, follow these steps:
 
-  npm install -g typescript
+1. Download or clone this repository to your machine.
+2. In Figma, open the file you want to use the plugin in.
+3. Go to `Plugins` -> `Development` -> `New Plugin...`.
+4. Click on `Click to choose a manifest.json file`.
+5. Navigate to the folder where you downloaded or cloned this repository, and select the `manifest.json` file.
 
-Finally, in the directory of your plugin, get the latest type definitions for the plugin API by running:
+Now, the plugin should be available for use in your Figma file under `Plugins` -> `Development`.
 
-  npm install --save-dev @figma/plugin-typings
+## Development
 
-If you are familiar with JavaScript, TypeScript will look very familiar. In fact, valid JavaScript code
-is already valid Typescript code.
+This plugin is open-source and we welcome contributions. If you want to contribute, please follow these steps:
 
-TypeScript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
+1. Fork the repository.
+2. Clone it to your local machine.
+3. Make your changes and test them in Figma.
+4. Push your changes to your forked repository.
+5. Create a pull request.
 
-For more information, visit https://www.typescriptlang.org/
+If you encounter any issues or have suggestions for improvements, please open an issue in the GitHub repository.
 
-Using TypeScript requires a compiler to convert TypeScript (code.ts) into JavaScript (code.js)
-for the browser to run.
+## License
 
-We recommend writing TypeScript code using Visual Studio code:
-
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Open this directory in Visual Studio Code.
-3. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "npm: watch". You will have to do this again every time
-    you reopen Visual Studio Code.
-
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.
+This plugin is distributed under the MIT License. See the LICENSE file for more information.
