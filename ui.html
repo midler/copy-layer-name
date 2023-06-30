@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>copy-layer-name</title>
+    </head>
+    <body>
+
+        <input id="clipboard-text" readonly>
+        <button onclick="copyToClipboard()">Copy</button>
+
+        <script>
+            window.onmessage = (event) => {
+                if (event.data.pluginMessage.type === 'copy-to-clipboard') {
+                    document.getElementById('clipboard-text').value = event.data.pluginMessage.text;
+                }
+            }
+            function copyToClipboard() {
+                var copyText = document.getElementById("clipboard-text");
+                copyText.select();
+                copyText.setSelectionRange(0, 99999); // For mobile devices
+                document.execCommand("copy");
+            }
+        </script>
+    </body>
+</html>
