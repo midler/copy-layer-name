@@ -1,25 +1,74 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>copy-layer-name</title>
-    </head>
-    <body>
+<style>
+  body {
+    margin: 0;
+    padding: 16px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
 
-        <input id="clipboard-text" readonly>
-        <button onclick="copyToClipboard()">Copy</button>
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
 
-        <script>
-            window.onmessage = (event) => {
-                if (event.data.pluginMessage.type === 'copy-to-clipboard') {
-                    document.getElementById('clipboard-text').value = event.data.pluginMessage.text;
-                }
-            }
-            function copyToClipboard() {
-                var copyText = document.getElementById("clipboard-text");
-                copyText.select();
-                copyText.setSelectionRange(0, 99999); // For mobile devices
-                document.execCommand("copy");
-            }
-        </script>
-    </body>
-</html>
+  .main-title {
+    margin-top: 0;
+    font-size: 20px;
+    color: var(--figma-color-text)
+  }
+
+  .container {
+    min-width: 300px;
+  }
+
+  .input {
+    padding: 8px;
+  }
+
+  .copy-form {
+    display: flex;
+    gap: 8px;
+
+  }
+
+  .copy-form__input {
+    flex: 1;
+  }
+
+  .copy-form__button-icon {
+    vertical-align: middle;
+  }
+
+</style>
+
+<section>
+  <h2 class="main-title visually-hidden">Copy layer name controller</h2>
+  <p class="container copy-form">
+    <input id="clipboard-text" readonly class="copy-form__input input">
+    <button onclick="copyToClipboard()" class="copy-form__button"><svg class="copy-form__button-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960">
+        <path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z" />
+      </svg> Copy</button>
+  </p>
+
+</section>
+
+
+<script>
+  window.onmessage = (event) => {
+    if (event.data.pluginMessage.type === 'copy-to-clipboard') {
+      document.getElementById('clipboard-text').value = event.data.pluginMessage.text;
+    }
+  }
+  function copyToClipboard() {
+    var copyText = document.getElementById("clipboard-text");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); // For mobile devices
+    document.execCommand("copy");
+  }
+</script>
