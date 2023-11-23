@@ -1,8 +1,23 @@
 {
   "compilerOptions": {
     "target": "es6",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
     "lib": ["es6"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
+    /* Linting */
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@figma"

@@ -9,15 +9,15 @@
 // This shows the HTML page in "ui.html".
 
 // This monitors the selection changes and posts the selection to the UI
-figma.showUI(__html__, { width: 200, height: 100 });
+figma.showUI(__html__, { width: 350, height: 100, themeColors: true });
 
 function updateSelection() {
-    let selectedLayers = figma.currentPage.selection;
-    if (selectedLayers.length > 0) {
-        figma.ui.postMessage({ type: 'copy-to-clipboard', text: selectedLayers[0].name });
-    } else {
-        figma.ui.postMessage({ type: 'copy-to-clipboard', text: 'No layer selected' });
-    }
+  let selectedLayers = figma.currentPage.selection;
+  if (selectedLayers.length > 0) {
+    figma.ui.postMessage({ type: 'copy-to-clipboard', text: selectedLayers[0].name });
+  } else {
+    figma.ui.postMessage({ type: 'copy-to-clipboard', text: 'No layer selected' });
+  }
 }
 
 updateSelection();

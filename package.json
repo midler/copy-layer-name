@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "description": "Your Figma Plugin",
   "main": "code.js",
+  "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && vite build",
     "watch": "npm run build -- --watch"
   },
   "author": "",
   "license": "",
   "devDependencies": {
     "@figma/plugin-typings": "^1.81.0",
-    "typescript": "*"
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vite-plugin-html": "^3.2.0"
   }
 }
