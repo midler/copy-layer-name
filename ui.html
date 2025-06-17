@@ -1,7 +1,7 @@
 <style>
   :root {
     --figma-blue: #18A0FB;
-    --figma-hover-blue: #1888E0;
+    --figma-hover-blue: #eff5fa;
     --border-radius: 6px;
     --transition-speed: 0.2s;
     --section-gap: 8px;
@@ -76,6 +76,7 @@
   button.primary {
     background-color: var(--figma-blue);
     color: white;
+    transition: background-color var(--transition-speed);
   }
 
   button.primary:hover {
@@ -105,6 +106,7 @@
 
   .copy-success {
     background-color: var(--figma-color-success) !important;
+    transition: background-color var(--transition-speed);
   }
 
   .status-message {
