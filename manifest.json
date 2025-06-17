@@ -6,6 +6,7 @@
   "capabilities": [
     "inspect"
   ],
+  "documentAccess": "dynamic-page",
   "enableProposedApi": false,
   "editorType": [
     "figma",
