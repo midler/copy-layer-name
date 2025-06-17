@@ -1,15 +1,25 @@
 {
   "name": "copy-layer-name",
   "version": "1.0.0",
-  "description": "Your Figma Plugin",
+  "description": "A Figma plugin that allows you to quickly copy the names of selected layers",
   "main": "code.js",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json && vite build",
-    "watch": "npm run build -- --watch"
+    "watch": "npm run build -- --watch",
+    "dev": "npm run watch",
+    "lint": "tsc --noEmit",
+    "prebuild": "npm run lint"
   },
   "author": "",
-  "license": "",
+  "license": "MIT",
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "ui",
+    "layer-name",
+    "copy"
+  ],
   "devDependencies": {
     "@figma/plugin-typings": "^1.81.0",
     "typescript": "^5.2.2",

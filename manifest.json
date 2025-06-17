@@ -8,6 +8,8 @@
   ],
   "enableProposedApi": false,
   "editorType": [
+    "figma",
+    "figjam",
     "dev"
   ],
   "ui": "ui.html",

@@ -1,74 +1,490 @@
 <style>
+  :root {
+    --figma-blue: #18A0FB;
+    --figma-hover-blue: #1888E0;
+    --border-radius: 6px;
+    --transition-speed: 0.2s;
+    --section-gap: 8px;
+  }
+
   body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    padding: 0;
     margin: 0;
-    padding: 16px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-
-  .visually-hidden {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-  }
-
-  .main-title {
-    margin-top: 0;
-    font-size: 20px;
-    color: var(--figma-color-text)
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    background-color: var(--figma-color-bg);
+    color: var(--figma-color-text);
+    font-size: 11px;
+    line-height: 16px;
+    letter-spacing: 0.005em;
   }
 
   .container {
-    min-width: 300px;
-  }
-
-  .input {
-    padding: 8px;
-  }
-
-  .copy-form {
+    padding: var(--section-gap);
     display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
+  }
+
+  #layerNameText {
+    padding: 8px 12px;
+    background-color: var(--figma-color-bg);
+    border: 1px solid var(--figma-color-border);
+    border-radius: var(--border-radius);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--figma-color-text);
+    word-break: break-all;
+    max-height: 60px;
+    overflow-y: auto;
+    position: relative;
+    transition: border-color var(--transition-speed);
+    min-height: 20px;
+  }
+
+  #layerNameText:hover {
+    border-color: var(--figma-color-border-hover);
+  }
+
+  .button-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--section-gap);
+    padding: 0 var(--section-gap);
+  }
+
+  button {
+    padding: 5px 12px 6px;
+    border-radius: var(--border-radius);
+    border: 1px solid transparent;
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 16px;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    min-width: 0;
+  }
+
+  button.primary {
+    background-color: var(--figma-blue);
+    color: white;
+  }
+
+  button.primary:hover {
+    background-color: var(--figma-hover-blue);
+  }
+
+  button.secondary {
+    background-color: var(--figma-color-bg);
+    border-color: var(--figma-color-border);
+    color: var(--figma-color-text);
+  }
+
+  button.secondary:hover {
+    border-color: var(--figma-color-border-hover);
+    background-color: var(--figma-color-bg-hover);
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .copy-success {
+    background-color: var(--figma-color-success) !important;
+  }
+
+  .status-message {
+    font-size: 11px;
+    text-align: center;
+    color: var(--figma-color-text-secondary);
+    height: 16px;
+    margin: 0;
+    padding: 0 var(--section-gap);
+    opacity: 0;
+    transition: opacity var(--transition-speed);
+  }
+
+  .status-message.show {
+    opacity: 1;
+  }
+
+  .divider {
+    height: 1px;
+    background-color: var(--figma-color-border);
+    margin: 4px var(--section-gap);
+  }
+
+  /* История */
+  .history-section {
+    padding: 0 var(--section-gap);
+  }
+
+  .history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+    color: var(--figma-color-text-secondary);
+    user-select: none;
+  }
+
+  .history-title {
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .history-toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    margin: -4px;
+    border-radius: 2px;
+    transition: background-color var(--transition-speed);
+  }
+
+  .history-toggle:hover {
+    background-color: var(--figma-color-bg-hover);
+  }
+
+  .chevron {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition-speed);
+  }
+
+  .chevron.up {
+    transform: rotate(180deg);
+  }
+
+  .history-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-speed);
+  }
+
+  .history-panel.show {
+    max-height: 200px;
+  }
+
+  .history-list {
+    margin-top: var(--section-gap);
+    border: 1px solid var(--figma-color-border);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background-color: var(--figma-color-bg);
+  }
+
+  .history-item {
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
     gap: 8px;
-
+    border-bottom: 1px solid var(--figma-color-border);
+    transition: background-color var(--transition-speed);
   }
 
-  .copy-form__input {
-    flex: 1;
+  .history-item:last-child {
+    border-bottom: none;
   }
 
-  .copy-form__button-icon {
-    vertical-align: middle;
+  .history-item:hover {
+    background-color: var(--figma-color-bg-hover);
   }
 
+  .history-text {
+    flex-grow: 1;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--figma-color-text);
+  }
+
+  .history-copy {
+    padding: 0;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    color: var(--figma-color-text-secondary);
+    background: none;
+  }
+
+  .history-copy:hover {
+    background-color: var(--figma-color-bg-hover);
+    color: var(--figma-blue);
+  }
+
+  .empty-history {
+    padding: 12px;
+    text-align: center;
+    color: var(--figma-color-text-tertiary);
+    font-size: 11px;
+  }
 </style>
 
-<section>
-  <h2 class="main-title visually-hidden">Copy layer name controller</h2>
-  <p class="container copy-form">
-    <input id="clipboard-text" readonly class="copy-form__input input">
-    <button onclick="copyToClipboard()" class="copy-form__button"><svg class="copy-form__button-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960">
-        <path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z" />
-      </svg> Copy</button>
-  </p>
+<div class="container">
+  <div id="layerNameText">No layer selected</div>
 
-</section>
+  <div class="button-container">
+    <button id="copyButton" class="primary">Copy</button>
+    <button id="clearButton" class="secondary">Clear</button>
+  </div>
 
+  <div class="status-message" id="statusMessage"></div>
+
+  <div class="divider"></div>
+
+  <div class="history-section">
+    <div class="history-header">
+      <div class="history-title">History</div>
+      <div class="history-toggle" id="historyToggle">
+        <div class="chevron">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+            <path d="M4 6.5L0.5 2L7.5 2L4 6.5Z" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-panel" id="historyPanel">
+      <div class="history-list" id="historyList">
+        <div class="empty-history">No history yet</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-  window.onmessage = (event) => {
-    if (event.data.pluginMessage.type === 'copy-to-clipboard') {
-      document.getElementById('clipboard-text').value = event.data.pluginMessage.text;
+  const layerNameTextElement = document.getElementById('layerNameText');
+  const copyButton = document.getElementById('copyButton');
+  const clearButton = document.getElementById('clearButton');
+  const statusMessage = document.getElementById('statusMessage');
+  const historyToggle = document.getElementById('historyToggle');
+  const historyPanel = document.getElementById('historyPanel');
+  const historyList = document.getElementById('historyList');
+  const chevron = historyToggle.querySelector('.chevron');
+  let currentTextToCopy = 'No layer selected';
+  let copyTimer;
+
+  // Массив для хранения истории (максимум 10 последних записей)
+  let historyItems = [];
+  const MAX_HISTORY_ITEMS = 10;
+
+  // Загрузка истории из localStorage при запуске
+  loadHistory();
+
+  // Переключатель отображения панели истории
+  historyToggle.addEventListener('click', () => {
+    historyPanel.classList.toggle('show');
+    chevron.classList.toggle('up');
+
+    // Уведомляем основной код о необходимости изменить размер окна
+    const isExpanded = historyPanel.classList.contains('show');
+    parent.postMessage({
+      pluginMessage: {
+        type: 'resize-window',
+        expanded: isExpanded
+      }
+    }, '*');
+  });
+
+  // Функция для загрузки истории из localStorage
+  function loadHistory() {
+    try {
+      const savedHistory = localStorage.getItem('copyLayerNameHistory');
+      if (savedHistory) {
+        historyItems = JSON.parse(savedHistory);
+        renderHistoryList();
+      }
+    } catch (error) {
+      console.error('Failed to load history:', error);
     }
   }
-  function copyToClipboard() {
-    var copyText = document.getElementById("clipboard-text");
-    copyText.select();
-    copyText.setSelectionRange(0, 99999); // For mobile devices
-    document.execCommand("copy");
+
+  // Функция для сохранения истории в localStorage
+  function saveHistory() {
+    try {
+      localStorage.setItem('copyLayerNameHistory', JSON.stringify(historyItems));
+    } catch (error) {
+      console.error('Failed to save history:', error);
+    }
   }
+
+  // Функция для добавления элемента в историю
+  function addToHistory(text, type) {
+    // Не добавляем "No layer selected" в историю
+    if (text === 'No layer selected') return;
+
+    // Проверяем, не дублирует ли новый элемент последний в истории
+    if (historyItems.length > 0 && historyItems[0].text === text) return;
+
+    // Добавляем новый элемент в начало массива
+    historyItems.unshift({
+      text,
+      type,
+      timestamp: new Date().toISOString()
+    });
+
+    // Ограничиваем размер истории
+    if (historyItems.length > MAX_HISTORY_ITEMS) {
+      historyItems = historyItems.slice(0, MAX_HISTORY_ITEMS);
+    }
+
+    // Сохраняем обновленную историю
+    saveHistory();
+
+    // Обновляем отображение истории
+    renderHistoryList();
+  }
+
+  // Функция для отображения списка истории
+  function renderHistoryList() {
+    if (historyItems.length === 0) {
+      historyList.innerHTML = '<div class="empty-history">No history yet</div>';
+      return;
+    }
+
+    historyList.innerHTML = '';
+
+    historyItems.forEach((item, index) => {
+      const historyItem = document.createElement('div');
+      historyItem.className = 'history-item';
+
+      const historyText = document.createElement('div');
+      historyText.className = 'history-text';
+      historyText.textContent = item.text;
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'history-copy';
+      copyBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 4.5C2 3.67157 2.67157 3 3.5 3H9.5C10.3284 3 11 3.67157 11 4.5V4.5C11 5.32843 10.3284 6 9.5 6H3.5C2.67157 6 2 5.32843 2 4.5V4.5Z" fill="currentColor"/>
+          <path d="M5 9.5C5 8.67157 5.67157 8 6.5 8H12.5C13.3284 8 14 8.67157 14 9.5V9.5C14 10.3284 13.3284 11 12.5 11H6.5C5.67157 11 5 10.3284 5 9.5V9.5Z" fill="currentColor"/>
+        </svg>
+      `;
+
+      copyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        copyToClipboard(item.text);
+      });
+
+      historyItem.appendChild(historyText);
+      historyItem.appendChild(copyBtn);
+
+      historyItem.addEventListener('click', () => {
+        currentTextToCopy = item.text;
+        layerNameTextElement.textContent = item.text;
+        copyButton.disabled = false;
+        clearButton.disabled = false;
+      });
+
+      historyList.appendChild(historyItem);
+    });
+  }
+
+  // Функция для копирования текста
+  function copyToClipboard(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        showSuccessMessage('Copied from history!');
+      } else {
+        throw new Error('Copy failed');
+      }
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      statusMessage.textContent = 'Copy failed!';
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  window.onmessage = async (event) => {
+    if (event.data.pluginMessage.type === 'update-text') {
+      currentTextToCopy = event.data.pluginMessage.text;
+      layerNameTextElement.textContent = currentTextToCopy;
+      copyButton.textContent = 'Copy';
+      copyButton.classList.remove('copy-success');
+      statusMessage.textContent = '';
+      copyButton.disabled = currentTextToCopy === 'No layer selected';
+      clearButton.disabled = copyButton.disabled;
+
+      // Если текст не "No layer selected", добавляем его в историю
+      if (currentTextToCopy !== 'No layer selected') {
+        const layerInfo = event.data.pluginMessage.layerInfo || {};
+        addToHistory(currentTextToCopy, layerInfo.type || 'unknown');
+      }
+    }
+  };
+
+  // Обновляем функцию showSuccessMessage для работы с новыми стилями
+  function showSuccessMessage(message) {
+    statusMessage.textContent = message;
+    statusMessage.classList.add('show');
+    clearTimeout(copyTimer);
+    copyTimer = setTimeout(() => {
+      statusMessage.classList.remove('show');
+    }, 3000);
+  }
+
+  copyButton.onclick = () => {
+    // Создаем временный элемент textarea для копирования текста
+    const textarea = document.createElement('textarea');
+    textarea.value = currentTextToCopy;
+    textarea.style.position = 'fixed';  // Позиционируем вне видимой области
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      // Используем execCommand для копирования (более надежный метод в контексте плагинов)
+      const successful = document.execCommand('copy');
+      if (successful) {
+        copyButton.textContent = 'Copied!';
+        copyButton.classList.add('copy-success');
+        showSuccessMessage('Layer name copied to clipboard');
+        setTimeout(() => {
+          copyButton.textContent = 'Copy';
+          copyButton.classList.remove('copy-success');
+        }, 1500);
+      } else {
+        throw new Error('Copy failed');
+      }
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      statusMessage.textContent = 'Copy failed!';
+    } finally {
+      // Удаляем временный элемент
+      document.body.removeChild(textarea);
+    }
+  };
+
+  clearButton.onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'clear-selection' } }, '*');
+  };
 </script>
