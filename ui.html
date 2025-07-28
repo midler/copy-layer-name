@@ -19,6 +19,8 @@
     font-size: 11px;
     line-height: 16px;
     letter-spacing: 0.005em;
+    overflow: hidden;
+    height: 100vh;
   }
 
   .container {
@@ -26,9 +28,17 @@
     display: flex;
     flex-direction: column;
     gap: var(--section-gap);
+    height: 100%;
+    overflow: hidden;
   }
 
-  #layerNameText {
+  #inputContainer {
+    position: relative;
+    width: 100%;
+  }
+
+  #layerNameInput,
+  #layerNameTextarea {
     padding: 8px 12px;
     background-color: var(--figma-color-bg);
     border: 1px solid var(--figma-color-border);
@@ -36,16 +46,46 @@
     font-size: 13px;
     line-height: 1.4;
     color: var(--figma-color-text);
-    word-break: break-all;
-    max-height: 60px;
-    overflow-y: auto;
-    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    appearance: none;
+    outline: none;
     transition: border-color var(--transition-speed);
-    min-height: 20px;
   }
 
-  #layerNameText:hover {
+  #layerNameInput {
+    display: block;
+  }
+
+  #layerNameTextarea {
+    display: none;
+    resize: vertical;
+    min-height: calc(1.4em * 5 + 16px);
+    max-height: 200px;
+    /* минимум 5 строк + padding */
+    position: relative;
+    word-break: break-all;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  #inputContainer.tree-view #layerNameInput {
+    display: none;
+  }
+
+  #inputContainer.tree-view #layerNameTextarea {
+    display: block;
+  }
+
+  #layerNameInput:hover,
+  #layerNameTextarea:hover {
     border-color: var(--figma-color-border-hover);
+  }
+
+  #layerNameInput:focus,
+  #layerNameTextarea:focus {
+    border-color: var(--figma-blue);
   }
 
   .button-container {
@@ -177,21 +217,24 @@
   }
 
   .history-panel {
-    max-height: 0;
+    height: 0;
     overflow: hidden;
-    transition: max-height var(--transition-speed);
+    transition: height var(--transition-speed);
   }
 
   .history-panel.show {
-    max-height: 200px;
+    height: 220px;
   }
 
   .history-list {
     margin-top: var(--section-gap);
     border: 1px solid var(--figma-color-border);
     border-radius: var(--border-radius);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     background-color: var(--figma-color-bg);
+    max-height: 160px;
+    height: 160px;
   }
 
   .history-item {
@@ -240,10 +283,74 @@
     color: var(--figma-color-text-tertiary);
     font-size: 11px;
   }
+
+  /* Checkbox styles */
+  .options-container {
+    padding: 0 var(--section-gap);
+    margin-bottom: var(--section-gap);
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--figma-color-text);
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--figma-color-border);
+    border-radius: 4px;
+    margin: 0;
+    cursor: pointer;
+    position: relative;
+    transition: all var(--transition-speed);
+    background-color: var(--figma-color-bg);
+  }
+
+  .checkbox-label input[type="checkbox"]:checked {
+    background-color: var(--figma-blue);
+    border-color: var(--figma-blue);
+  }
+
+  .checkbox-label input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .checkbox-label input[type="checkbox"]:hover {
+    border-color: var(--figma-color-border-hover);
+  }
+
+  .checkbox-label span {
+    font-size: 11px;
+  }
+
 </style>
 
 <div class="container">
-  <div id="layerNameText">No layer selected</div>
+  <div class="options-container">
+    <label class="checkbox-label">
+      <input type="checkbox" id="treeViewCheckbox">
+      <span>Tree view</span>
+    </label>
+  </div>
+
+  <div id="inputContainer">
+    <input type="text" id="layerNameInput" readonly value="No layer selected">
+    <textarea id="layerNameTextarea" readonly>No layer selected</textarea>
+  </div>
 
   <div class="button-container">
     <button id="copyButton" class="primary">Copy</button>
@@ -260,7 +367,7 @@
       <div class="history-toggle" id="historyToggle">
         <div class="chevron">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-            <path d="M4 6.5L0.5 2L7.5 2L4 6.5Z" fill="currentColor"/>
+            <path d="M4 6.5L0.5 2L7.5 2L4 6.5Z" fill="currentColor" />
           </svg>
         </div>
       </div>
@@ -275,7 +382,9 @@
 </div>
 
 <script>
-  const layerNameTextElement = document.getElementById('layerNameText');
+  const inputContainer = document.getElementById('inputContainer');
+  const layerNameInput = document.getElementById('layerNameInput');
+  const layerNameTextarea = document.getElementById('layerNameTextarea');
   const copyButton = document.getElementById('copyButton');
   const clearButton = document.getElementById('clearButton');
   const statusMessage = document.getElementById('statusMessage');
@@ -283,7 +392,9 @@
   const historyPanel = document.getElementById('historyPanel');
   const historyList = document.getElementById('historyList');
   const chevron = historyToggle.querySelector('.chevron');
+  const treeViewCheckbox = document.getElementById('treeViewCheckbox');
   let currentTextToCopy = 'No layer selected';
+  let currentLayerPath = [];
   let copyTimer;
 
   // Массив для хранения истории (максимум 10 последних записей)
@@ -393,7 +504,8 @@
 
       historyItem.addEventListener('click', () => {
         currentTextToCopy = item.text;
-        layerNameTextElement.textContent = item.text;
+        currentLayerPath = [item.text];
+        updateDisplayText();
         copyButton.disabled = false;
         clearButton.disabled = false;
       });
@@ -426,10 +538,50 @@
     }
   }
 
+  // Function to format layer path as a tree
+  function formatLayerPathAsTree(path) {
+    return path.join('\n');
+  }
+
+  // Function to update the displayed text based on tree view preference
+  function updateDisplayText() {
+    // Обновляем класс контейнера
+    inputContainer.classList.toggle('tree-view', treeViewCheckbox.checked);
+
+    if (currentTextToCopy === 'No layer selected') {
+      layerNameInput.value = currentTextToCopy;
+      layerNameTextarea.value = currentTextToCopy;
+    } else if (treeViewCheckbox.checked && currentLayerPath.length > 0) {
+      layerNameTextarea.value = formatLayerPathAsTree(currentLayerPath);
+      layerNameInput.value = currentTextToCopy;
+    } else {
+      layerNameInput.value = currentTextToCopy;
+      layerNameTextarea.value = formatLayerPathAsTree(currentLayerPath);
+    }
+
+    // Reset height to recalculate only for textarea
+    layerNameTextarea.style.height = 'auto';
+    // Set new height based on content
+    const newHeight = treeViewCheckbox.checked ? layerNameTextarea.scrollHeight : 38; // 38px - высота input
+
+    parent.postMessage({
+      pluginMessage: {
+        type: 'resize-window',
+        expanded: historyPanel.classList.contains('show')
+      }
+    }, '*');
+  }
+
+  // Add event listener for checkbox changes
+  treeViewCheckbox.addEventListener('change', updateDisplayText);
+
   window.onmessage = async (event) => {
     if (event.data.pluginMessage.type === 'update-text') {
       currentTextToCopy = event.data.pluginMessage.text;
-      layerNameTextElement.textContent = currentTextToCopy;
+      currentLayerPath = event.data.pluginMessage.layerPath || [currentTextToCopy];
+
+      updateDisplayText();
+
       copyButton.textContent = 'Copy';
       copyButton.classList.remove('copy-success');
       statusMessage.textContent = '';
@@ -457,7 +609,7 @@
   copyButton.onclick = () => {
     // Создаем временный элемент textarea для копирования текста
     const textarea = document.createElement('textarea');
-    textarea.value = currentTextToCopy;
+    textarea.value = treeViewCheckbox.checked ? layerNameTextarea.value : layerNameInput.value;
     textarea.style.position = 'fixed';  // Позиционируем вне видимой области
     textarea.style.opacity = '0';
     document.body.appendChild(textarea);
@@ -467,12 +619,15 @@
       // Используем execCommand для копирования (более надежный метод в контексте плагинов)
       const successful = document.execCommand('copy');
       if (successful) {
+        const originalText = copyButton.textContent;
         copyButton.textContent = 'Copied!';
         copyButton.classList.add('copy-success');
         showSuccessMessage('Layer name copied to clipboard');
         setTimeout(() => {
-          copyButton.textContent = 'Copy';
-          copyButton.classList.remove('copy-success');
+          if (copyButton) {  // Check if button still exists
+            copyButton.textContent = originalText;
+            copyButton.classList.remove('copy-success');
+          }
         }, 1500);
       } else {
         throw new Error('Copy failed');

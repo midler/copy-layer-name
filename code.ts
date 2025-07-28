@@ -9,17 +9,15 @@
 // Show the HTML page in "ui.html" with responsive sizing
 figma.showUI(__html__, {
   width: 360,
-  height: 160,
+  height: 360,
   themeColors: true
 });
 
-// Window size configuration
+  // Window size configuration
 const UI_SIZES = {
-  collapsed: { width: 360, height: 160 },
-  expanded: { width: 360, height: 380 }
-};
-
-// Maximum number of layer names to show when multiple layers are selected
+  collapsed: { width: 360, height: 360 },
+  expanded: { width: 360, height: 420 }
+};// Maximum number of layer names to show when multiple layers are selected
 const MAX_LAYER_NAMES = 5;
 
 // This monitors the selection changes and posts the selection to the UI
@@ -33,9 +31,31 @@ function updateSelection() {
       const layerName = layer.name;
       const layerType = layer.type; // e.g., FRAME, TEXT, RECTANGLE, etc.
 
+      // Функция для получения дерева слоев
+      function getLayerTree(node: BaseNode): string[] {
+        const tree: string[] = [];
+
+        function traverse(currentNode: BaseNode, level: number) {
+          tree.push('\t'.repeat(level) + currentNode.name);
+          if ('children' in currentNode) {
+            const children = (currentNode as ChildrenMixin).children;
+            children.forEach(child => {
+              traverse(child, level + 1);
+            });
+          }
+        }
+
+        traverse(node, 0);
+        return tree;
+      }
+
+      // Получаем полное дерево слоев
+      const layerTree = getLayerTree(layer);
+
       figma.ui.postMessage({
         type: 'update-text',
         text: layerName,
+        layerPath: layerTree,
         layerInfo: {
           type: layerType,
           id: layer.id
@@ -56,9 +76,31 @@ function updateSelection() {
         displayText = `${layerNames.join(', ')} and ${totalCount - MAX_LAYER_NAMES} more`;
       }
 
+      // Получаем общего родителя для всех выбранных слоев
+      let commonParent: BaseNode | null = selectedLayers[0].parent;
+      const layerPath: string[] = [];
+
+      // Ищем общего родителя
+      while (commonParent && commonParent.type !== 'PAGE') {
+        if (selectedLayers.every(layer => {
+          let parent = layer.parent;
+          while (parent && parent.type !== 'PAGE') {
+            if (parent === commonParent) return true;
+            parent = parent.parent;
+          }
+          return false;
+        })) {
+          layerPath.unshift(commonParent.name);
+          commonParent = commonParent.parent;
+        } else {
+          break;
+        }
+      }
+
       figma.ui.postMessage({
         type: 'update-text',
         text: displayText,
+        layerPath: layerPath,
         layerInfo: {
           count: totalCount
         }
